@@ -47,14 +47,14 @@ do
 done
 
 # Install Required Debian Packages
-apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 \
-	        --verbose 803DDF595EA7B6644F9B96B752150A179A9E84C9
-echo "deb http://ppa.launchpad.net/ubuntu-xilinx/updates/ubuntu focal main" > /etc/apt/sources.list.d/xilinx-gstreamer.list
-apt update 
+# apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 \
+#	        --verbose 803DDF595EA7B6644F9B96B752150A179A9E84C9
+# echo "deb http://ppa.launchpad.net/ubuntu-xilinx/updates/ubuntu focal main" > /etc/apt/sources.list.d/xilinx-gstreamer.list
+# apt update 
 
 apt-get -o DPkg::Lock::Timeout=10 update && \
-apt-get install -y python3.8-venv python3-cffi libssl-dev libcurl4-openssl-dev \
-  portaudio19-dev libcairo2-dev libdrm-xlnx-dev libopencv-dev python3-opencv graphviz i2c-tools \
+apt-get install -y python3-venv python3-cffi libssl-dev libcurl4-openssl-dev \
+  portaudio19-dev libcairo2-dev libdrm-dev libopencv-dev python3-opencv graphviz i2c-tools \
   fswebcam
 
 # Install PYNQ Virtual Environment 
@@ -150,8 +150,8 @@ popd
 python3 -m pip install git+https://github.com/Xilinx/PYNQ_Peripherals.git
 
 # Install DPU-PYNQ
-yes Y | apt remove --purge vitis-ai-runtime
-python3 -m pip install pynq-dpu --no-use-pep517
+# yes Y | apt remove --purge vitis-ai-runtime
+# python3 -m pip install pynq-dpu --no-use-pep517
 
 
 # Deliver all notebooks
@@ -174,7 +174,7 @@ sed -i 's/Raspberry Pi kits is connected into the board.//g' $PYNQ_JUPYTER_NOTEB
 
 
 # Patch microblaze to use virtualenv libraries
-sed -i "s/opt\/microblaze/usr\/local\/share\/pynq-venv\/bin/g" /usr/local/share/pynq-venv/lib/python3.8/site-packages/pynq/lib/pynqmicroblaze/rpc.py
+sed -i "s/opt\/microblaze/usr\/local\/share\/pynq-venv\/bin/g" /usr/local/share/pynq-venv/lib/python3.10/site-packages/pynq/lib/pynqmicroblaze/rpc.py
 
 # Remove unnecessary notebooks
 rm -rf $PYNQ_JUPYTER_NOTEBOOKS/pynq_peripherals/app* $PYNQ_JUPYTER_NOTEBOOKS/pynq_peripherals/grove_joystick
@@ -189,8 +189,8 @@ systemctl start jupyter.service
 systemctl start pl_server.service
 
 # Purge libdrm-xlnx-dev to allow `apt upgrade`
-apt-get purge -y libdrm-xlnx-dev
-apt-get purge -y libdrm-xlnx-amdgpu1
+# apt-get purge -y libdrm-xlnx-dev
+# apt-get purge -y libdrm-xlnx-amdgpu1
 
 # Ask to connect to Jupyter
 ip_addr=$(ip addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
